@@ -79,4 +79,7 @@ log_file &log_file::operator<<(char data)
     return *this;
 }
 
-log_file::~log_file() { log_file::file.close(); }
+log_file::~log_file() {
+    log_file::write();
+    log_file::file.close();
+}
