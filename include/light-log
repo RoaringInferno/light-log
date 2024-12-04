@@ -1,0 +1,11 @@
+#pragma once
+
+#include <string>
+#include <string_view>
+#include <fstream>
+
+#include "light-log_bits/log_file.hpp"
+namespace llog
+{
+    using file = _internal::log_file;
+} // namespace llog
