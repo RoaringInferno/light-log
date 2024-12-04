@@ -11,15 +11,15 @@ namespace llog::_internal
     class log_file
     {
     private:
-        std::ofstream file;
-        std::string buffer;
-    public:
-        void set_buffer(std::string_view new_buffer);
-        void push_buffer(std::string_view new_buffer);
-        void flush_buffer();
-        void clear_buffer();
+        static std::ofstream file;
+        static std::string buffer;
+    public: // Static
+        static void set(std::string_view text);
+        static void push(std::string_view text);
+        static void flush();
+        static void clear();
 
-        void write() { flush_buffer(); };
+        static void write() { flush(); };
     public:
         log_file& operator<<(std::string_view data);
         log_file& operator<<(const char* data);

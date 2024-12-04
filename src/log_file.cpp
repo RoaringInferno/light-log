@@ -4,34 +4,46 @@
 
 using namespace llog::_internal;
 
+std::ofstream log_file::file = std::ofstream("light-log-unitialized.log");
+std::string log_file::buffer = std::string();
 
-void log_file::set_buffer(std::string_view new_buffer)
+
+void log_file::set(std::string_view text)
 {
-    if (this->buffer.empty())
+    if (log_file::buffer.empty())
     {
-        this->clear_buffer();
+        clear();
         return;
     }
-    this->buffer = new_buffer;
+    log_file::buffer = text;
 }
 
-void log_file::push_buffer(std::string_view new_buffer)
+void log_file::push(std::string_view text)
 {
-    this->buffer += new_buffer;
-    if (this->buffer.size() >= 1024) this->flush_buffer();
+    log_file::buffer += text;
+    if (log_file::buffer.size() >= 1024) flush();
 }
 
-void log_file::flush_buffer()
+void log_file::flush()
 {
-    this->file << this->buffer;
-    this->clear_buffer();
+    log_file::file << log_file::buffer;
+    clear();
 }
 
-void log_file::clear_buffer() { this->buffer.clear(); }
+void log_file::clear() { log_file::buffer.clear(); }
 
 log_file::log_file(std::string_view prefix, std::string_view log_dir, std::string_view extension)
-    : file(), buffer()
 {
+    // Clear the log_file::buffer
+    log_file::file << log_file::buffer;
+    clear();
+
+    // If the file is already open, close it
+    if (log_file::file.is_open())
+    {
+        log_file::file.close();
+    }
+
     std::string file_path;
     {
         date_time dt;
@@ -42,8 +54,8 @@ log_file::log_file(std::string_view prefix, std::string_view log_dir, std::strin
     std::filesystem::create_directories(log_dir);
 
     // Open the file
-    this->file.open(file_path);
-    if (!this->file.is_open())
+    log_file::file.open(file_path);
+    if (!log_file::file.is_open())
     {
         throw std::runtime_error("Failed to open file: " + file_path);
     }
@@ -51,20 +63,20 @@ log_file::log_file(std::string_view prefix, std::string_view log_dir, std::strin
 
 log_file &log_file::operator<<(std::string_view data)
 {
-    this->push_buffer(data);
+    push(data);
     return *this;
 }
 
 log_file &log_file::operator<<(const char *data)
 {
-    this->push_buffer(data);
+    push(data);
     return *this;
 }
 
 log_file &log_file::operator<<(char data)
 {
-    this->push_buffer(std::string(1, data));
+    push(std::string(1, data));
     return *this;
 }
 
-log_file::~log_file() { this->file.close(); }
+log_file::~log_file() { log_file::file.close(); }
