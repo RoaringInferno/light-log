@@ -20,6 +20,9 @@ namespace llog::_internal
         static void clear();
 
         static void write() { flush(); };
+
+        /// @brief Writes the buffer and prints the buffer to the console.
+        static void dump();
     public:
         log_file& operator<<(std::string_view data);
         log_file& operator<<(const char* data);
