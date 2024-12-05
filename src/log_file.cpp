@@ -65,7 +65,7 @@ log_file::log_file(std::string_view prefix, std::string_view log_dir, std::strin
 void llog::_internal::log_file::dump()
 {
     std::cout << log_file::buffer;
-    log_file::flush();
+    write();
 }
 
 log_file &log_file::operator<<(std::string_view data)
